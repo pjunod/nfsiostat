@@ -403,6 +403,19 @@ class DeviceData:
             self.__print_rpc_op_stats('READ', sample_time)
             self.__print_rpc_op_stats('WRITE', sample_time)
             self.__print_page_stats(sample_time)
+	elif which == 4:
+            self.__print_rpc_op_stats('READ', sample_time)
+            self.__print_rpc_op_stats('WRITE', sample_time)
+            self.__print_rpc_op_stats('GETATTR', sample_time)
+            self.__print_rpc_op_stats('ACCESS', sample_time)
+            self.__print_rpc_op_stats('LOOKUP', sample_time)
+            self.__print_rpc_op_stats('READDIR', sample_time)
+            if self.__rpc_data.has_key('READDIRPLUS'):
+                self.__print_rpc_op_stats('READDIRPLUS', sample_time)
+            self.__print_dir_cache_stats(sample_time)
+            self.__print_page_stats(sample_time)
+            self.__print_attr_cache_stats(sample_time)
+
 
 #
 # Functions
@@ -537,6 +550,11 @@ client are listed.
                             dest="which",
                             const=3,
                             help='displays statistics related to the page cache')
+    statgroup.add_option('-A', '--dispall',
+			    action="store_const",
+			    dest="which",
+			    const=4,
+			    help='displays all of the statistics options')
     parser.add_option_group(statgroup)
     displaygroup = OptionGroup(parser, "Display Options",
                                'Options affecting display format:')
@@ -557,6 +575,9 @@ client are listed.
 
         if arg == sys.argv[0]:
             continue
+
+	if arg.endswith('/'):
+	    arg = arg.rstrip('/')
 
         if arg in mountstats:
             origdevices += [arg]
